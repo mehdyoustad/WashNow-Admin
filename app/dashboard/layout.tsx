@@ -3,15 +3,41 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-const navItems = [
-  { href: '/dashboard', icon: '📊', label: 'Dashboard' },
-  { href: '/dashboard/reservations', icon: '📋', label: 'Réservations' },
-  { href: '/dashboard/users', icon: '👥', label: 'Utilisateurs' },
-  { href: '/dashboard/prestateurs', icon: '🧽', label: 'Prestataires' },
-  { href: '/dashboard/promos', icon: '🎟️', label: 'Codes promo' },
-  { href: '/dashboard/litiges', icon: '⚖️', label: 'Litiges' },
-  { href: '/dashboard/settings', icon: '⚙️', label: 'Paramètres' },
+const navGroups = [
+  {
+    label: 'Général',
+    items: [
+      { href: '/dashboard', icon: '📊', label: 'Dashboard' },
+      { href: '/dashboard/analytics', icon: '📈', label: 'Analytiques' },
+    ],
+  },
+  {
+    label: 'Clients',
+    items: [
+      { href: '/dashboard/reservations', icon: '📋', label: 'Réservations' },
+      { href: '/dashboard/users', icon: '👥', label: 'Utilisateurs' },
+      { href: '/dashboard/litiges', icon: '⚖️', label: 'Litiges' },
+    ],
+  },
+  {
+    label: 'Laveurs',
+    items: [
+      { href: '/dashboard/laveurs', icon: '🧽', label: 'Laveurs' },
+      { href: '/dashboard/virements', icon: '💸', label: 'Virements' },
+      { href: '/dashboard/photos', icon: '📸', label: 'Photos missions' },
+    ],
+  },
+  {
+    label: 'Configuration',
+    items: [
+      { href: '/dashboard/promos', icon: '🎟️', label: 'Codes promo' },
+      { href: '/dashboard/prestateurs', icon: '🔧', label: 'Prestataires' },
+      { href: '/dashboard/settings', icon: '⚙️', label: 'Paramètres' },
+    ],
+  },
 ];
+
+const navItems = navGroups.flatMap(g => g.items);
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -71,26 +97,31 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Nav */}
-        <div style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
-          <div style={{ color: '#4a5568', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', padding: '8px 12px', marginBottom: 4 }}>Menu principal</div>
-          {navItems.map(item => {
-            const active = pathname === item.href;
-            return (
-              <Link key={item.href} href={item.href} style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                padding: '11px 14px', borderRadius: 10,
-                textDecoration: 'none',
-                backgroundColor: active ? 'rgba(26,107,255,0.15)' : 'transparent',
-                color: active ? '#1a6bff' : '#9ca3af',
-                fontSize: 14, fontWeight: active ? 600 : 400,
-                borderLeft: active ? '3px solid #1a6bff' : '3px solid transparent',
-                transition: 'all 0.15s',
-              }}>
-                <span style={{ fontSize: 16 }}>{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
+        <div style={{ flex: 1, padding: '12px 12px', display: 'flex', flexDirection: 'column', gap: 0, overflowY: 'auto' }}>
+          {navGroups.map(group => (
+            <div key={group.label} style={{ marginBottom: 12 }}>
+              <div style={{ color: '#4a5568', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', padding: '8px 12px 4px' }}>{group.label}</div>
+              {group.items.map(item => {
+                const active = pathname === item.href;
+                return (
+                  <Link key={item.href} href={item.href} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 14px', borderRadius: 10,
+                    textDecoration: 'none',
+                    backgroundColor: active ? 'rgba(26,107,255,0.15)' : 'transparent',
+                    color: active ? '#1a6bff' : '#9ca3af',
+                    fontSize: 13, fontWeight: active ? 600 : 400,
+                    borderLeft: active ? '3px solid #1a6bff' : '3px solid transparent',
+                    transition: 'all 0.15s',
+                    marginBottom: 1,
+                  }}>
+                    <span style={{ fontSize: 15 }}>{item.icon}</span>
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
         {/* User */}

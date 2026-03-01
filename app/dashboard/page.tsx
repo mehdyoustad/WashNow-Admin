@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -50,7 +50,7 @@ export default function Dashboard() {
       const { data: bookings, count: bookingsCount } = await supabase.from('bookings').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(5);
       const { data: allBookings } = await supabase.from('bookings').select('price');
       const revenue = allBookings?.reduce((sum: number, b: any) => sum + (b.price || 0), 0) || 0;
-      const { count: pendingCount } = await supabase.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+      const { count: pendingCount } = await supabase.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'en attente');
       setStats({ users: usersCount || 0, bookings: bookingsCount || 0, revenue, pending: pendingCount || 0 });
       setRecentBookings(bookings || []);
     } catch (e) { console.error(e); }
@@ -59,20 +59,28 @@ export default function Dashboard() {
 
   return (
     <div>
-      {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 28 }}>
+      {/* KPIs clients */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 20 }}>
         <KPICard icon="👥" label="Utilisateurs inscrits" value={loading ? '...' : stats.users} color="#1a6bff" trend="+12%" />
         <KPICard icon="📋" label="Total réservations" value={loading ? '...' : stats.bookings} color="#00c853" trend="+8%" />
         <KPICard icon="💰" label="Chiffre d'affaires" value={loading ? '...' : `${stats.revenue}€`} color="#FFB800" trend="+23%" />
         <KPICard icon="⏳" label="En attente" value={loading ? '...' : stats.pending} color="#ff6b35" />
       </div>
 
+      {/* KPIs laveurs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 28 }}>
+        <KPICard icon="🧽" label="Laveurs actifs" value="3" color="#00c853" trend="+1 ce mois" />
+        <KPICard icon="🟢" label="Laveurs en ligne" value="2" color="#4caf50" />
+        <KPICard icon="💸" label="Virements en attente" value="540€" color="#9c27b0" trend="2 demandes" />
+        <KPICard icon="⏳" label="En attente validation" value="1" color="#cc8800" />
+      </div>
+
       {/* Stats rapides */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginBottom: 28 }}>
         {[
-          { icon: '⭐', label: 'Note moyenne', value: '4.8 / 5', color: '#FFB800' },
+          { icon: '⭐', label: 'Note moyenne laveurs', value: '4.7 / 5', color: '#FFB800' },
           { icon: '🔄', label: 'Taux de rétention', value: '68%', color: '#1a6bff' },
-          { icon: '⚡', label: 'Taux de conversion', value: '34%', color: '#00c853' },
+          { icon: '🌿', label: 'Eau économisée (mars)', value: '7 830 L', color: '#00c853' },
         ].map((s, i) => (
           <div key={i} style={{ backgroundColor: 'white', borderRadius: 16, padding: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: 16 }}>
             <div style={{ width: 48, height: 48, backgroundColor: `${s.color}15`, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>{s.icon}</div>
@@ -139,8 +147,8 @@ export default function Dashboard() {
                   <td style={{ padding: '14px 12px', fontSize: 13, color: '#555' }}>{b.address}</td>
                   <td style={{ padding: '14px 12px', fontSize: 13, color: '#555' }}>{new Date(b.scheduled_at).toLocaleDateString('fr-FR')}</td>
                   <td style={{ padding: '14px 12px' }}>
-                    <span style={{ backgroundColor: b.status === 'pending' ? '#fff8e6' : '#e8faf0', color: b.status === 'pending' ? '#cc8800' : '#00c853', padding: '4px 10px', borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
-                      {b.status === 'pending' ? '⏳ En attente' : '✅ Terminé'}
+                    <span style={{ backgroundColor: b.status === 'en attente' ? '#fff8e6' : b.status === 'annulé' ? '#fff0f0' : b.status === 'en cours' ? '#e8f0ff' : '#e8faf0', color: b.status === 'en attente' ? '#cc8800' : b.status === 'annulé' ? '#cc3333' : b.status === 'en cours' ? '#1a6bff' : '#00c853', padding: '4px 10px', borderRadius: 20, fontSize: 12, fontWeight: 700 }}>
+                      {b.status === 'en attente' ? '⏳ En attente' : b.status === 'annulé' ? '❌ Annulé' : b.status === 'en cours' ? '🧵 En cours' : b.status === 'confirmé' ? '✅ Confirmé' : '✨ Terminé'}
                     </span>
                   </td>
                   <td style={{ padding: '14px 12px', fontSize: 14, fontWeight: 700, color: '#1a6bff' }}>{b.price}€</td>
