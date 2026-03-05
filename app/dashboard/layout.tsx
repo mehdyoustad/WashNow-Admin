@@ -9,6 +9,7 @@ const navGroups = [
     items: [
       { href: '/dashboard', icon: '📊', label: 'Dashboard' },
       { href: '/dashboard/analytics', icon: '📈', label: 'Analytiques' },
+      { href: '/dashboard/conversions', icon: '🎯', label: 'Conversions' },
     ],
   },
   {
