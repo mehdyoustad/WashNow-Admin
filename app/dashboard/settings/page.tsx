@@ -8,6 +8,8 @@ export default function Settings() {
   const [urgentFee, setUrgentFee] = useState(15);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceMsg, setMaintenanceMsg] = useState("WashNow est en maintenance. Nous serons de retour très bientôt !");
 
   useEffect(() => { fetchServices(); }, []);
 
@@ -95,6 +97,53 @@ export default function Settings() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Maintenance mode */}
+      <div style={{ backgroundColor: 'white', borderRadius: 16, padding: 28, marginBottom: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: maintenanceMode ? '2px solid #ff6b35' : '2px solid transparent' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <div>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0a0a0a', margin: 0, marginBottom: 6 }}>🔧 Mode maintenance</h2>
+            <p style={{ color: '#999', fontSize: 14, margin: 0 }}>Active un écran de maintenance sur l'application mobile</p>
+          </div>
+          <button
+            onClick={() => setMaintenanceMode(v => !v)}
+            style={{
+              width: 52, height: 28, borderRadius: 14, border: 'none', cursor: 'pointer',
+              backgroundColor: maintenanceMode ? '#ff6b35' : '#e0e0e0',
+              position: 'relative', transition: 'background-color 0.2s',
+            }}
+          >
+            <div style={{
+              position: 'absolute', top: 3, left: maintenanceMode ? 27 : 3,
+              width: 22, height: 22, borderRadius: 11, backgroundColor: 'white',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.2)', transition: 'left 0.2s',
+            }} />
+          </button>
+        </div>
+
+        {maintenanceMode && (
+          <div style={{ backgroundColor: '#fff4f0', borderRadius: 12, padding: 16, marginBottom: 16, border: '1px solid #ff6b3530' }}>
+            <div style={{ color: '#ff6b35', fontWeight: 700, fontSize: 13, marginBottom: 8 }}>
+              ⚠️ L'application mobile affichera un écran de maintenance à tous les utilisateurs
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: '#555', display: 'block', marginBottom: 6 }}>Message affiché aux utilisateurs</label>
+              <textarea
+                value={maintenanceMsg}
+                onChange={e => setMaintenanceMsg(e.target.value)}
+                rows={3}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '2px solid #e8e8e8', fontSize: 14, outline: 'none', resize: 'none', boxSizing: 'border-box' }}
+              />
+            </div>
+          </div>
+        )}
+
+        {!maintenanceMode && (
+          <div style={{ backgroundColor: '#e8faf0', borderRadius: 12, padding: 14, color: '#00c853', fontWeight: 600, fontSize: 13 }}>
+            ✅ Application en ligne — les clients peuvent réserver normalement
+          </div>
+        )}
       </div>
 
       <button onClick={handleSave} style={{ backgroundColor: '#1a6bff', color: 'white', padding: '16px 40px', borderRadius: 50, border: 'none', fontSize: 16, fontWeight: 700, cursor: 'pointer' }}>
