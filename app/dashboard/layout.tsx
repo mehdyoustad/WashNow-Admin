@@ -29,9 +29,15 @@ const navGroups = [
     ],
   },
   {
+    label: 'Marketing',
+    items: [
+      { href: '/dashboard/notifications', icon: '🔔', label: 'Notifications push' },
+      { href: '/dashboard/promos', icon: '🎟️', label: 'Codes promo' },
+    ],
+  },
+  {
     label: 'Configuration',
     items: [
-      { href: '/dashboard/promos', icon: '🎟️', label: 'Codes promo' },
       { href: '/dashboard/prestateurs', icon: '🔧', label: 'Prestataires' },
       { href: '/dashboard/settings', icon: '⚙️', label: 'Paramètres' },
     ],
